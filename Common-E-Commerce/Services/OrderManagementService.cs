@@ -1,10 +1,7 @@
-﻿// Файл: Services/OrderManagementService.cs (в проекте EcommerceConditionalLogic - Измененная версия)
-using System;
-using System.Threading.Tasks; // Для Task
-using EcommerceConditionalLogic.Events;
-using EcommerceConditionalLogic.Models; // Нужен PaymentStatus
-using EcommerceConditionalLogic.Data.Repositories; // Нужен репозиторий из этого проекта
-using EcommerceConditionalLogic.Data.Entities;    // Нужна сущность из этого проекта
+﻿using EcommerceConditionalLogic.Events;
+using EcommerceConditionalLogic.Models;
+using EcommerceConditionalLogic.Data.Repositories; 
+using EcommerceConditionalLogic.Data.Entities;   
 
 namespace EcommerceConditionalLogic
 {
@@ -31,9 +28,8 @@ namespace EcommerceConditionalLogic
                 _orderRepository = orderRepository ?? throw new ArgumentNullException(nameof(orderRepository));
             }
 
-            // --- Асинхронные методы Handle ---
 
-            public async Task Handle(OrderPlacedEvent ev) // Теперь async Task
+            public async Task Handle(OrderPlacedEvent ev)
             {
                 Console.WriteLine($"[ORDER MGMT] Received Order Placed: ID={ev.OrderId}. Attempting to create order in DB.");
 
@@ -65,13 +61,12 @@ namespace EcommerceConditionalLogic
                 }
             }
 
-            public async Task Handle(PaymentReceivedEvent ev) // Теперь async Task
+            public async Task Handle(PaymentReceivedEvent ev)
             {
                 Console.WriteLine($"[ORDER MGMT] Received Payment Result for Order ID={ev.OrderId}. Status={ev.Status}. Attempting to update order in DB.");
 
                 try
                 {
-                    // Используем методы репозитория
                     DbOrder? order = await _orderRepository.GetOrderByOrderIdAsync(ev.OrderId);
 
                     if (order == null)

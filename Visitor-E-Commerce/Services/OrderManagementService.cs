@@ -1,11 +1,8 @@
-﻿// Файл: Services/OrderManagementService.cs (Измененная версия)
-using System;
-using System.Threading.Tasks; // Для Task
-using EcommerceAcyclicVisitor.Interfaces;
+﻿using EcommerceAcyclicVisitor.Interfaces;
 using EcommerceAcyclicVisitor.Events;
-using EcommerceAcyclicVisitor.Models; // Для PaymentStatus
-using EcommerceAcyclicVisitor.Data.Repositories; // Нужен IOrderRepository
-using EcommerceAcyclicVisitor.Data.Entities;    // Нужна сущность DbOrder
+using EcommerceAcyclicVisitor.Models;
+using EcommerceAcyclicVisitor.Data.Repositories;
+using EcommerceAcyclicVisitor.Data.Entities;    
 
 namespace EcommerceAcyclicVisitor
 {
@@ -17,12 +14,11 @@ namespace EcommerceAcyclicVisitor
         /// </summary>
         public class OrderManagementService :
             IVisitor,
-            IOrderPlacedVisitor,    // Обрабатывает размещение заказа
-            IPaymentReceivedVisitor // Обрабатывает получение платежа
+            IOrderPlacedVisitor,    
+            IPaymentReceivedVisitor 
         {
             private readonly IOrderRepository _orderRepository;
 
-            // Статусы заказа (лучше вынести в константы или enum, но для простоты оставим строками)
             private const string StatusPendingPayment = "PendingPayment";
             private const string StatusProcessing = "Processing";
             private const string StatusPaymentFailed = "PaymentFailed";
@@ -30,7 +26,6 @@ namespace EcommerceAcyclicVisitor
             /// <summary>
             /// Конструктор, принимающий репозиторий через Dependency Injection.
             /// </summary>
-            /// <param name="orderRepository">Репозиторий для работы с заказами.</param>
             public OrderManagementService(IOrderRepository orderRepository)
             {
                 _orderRepository = orderRepository ?? throw new ArgumentNullException(nameof(orderRepository));
@@ -39,7 +34,7 @@ namespace EcommerceAcyclicVisitor
             /// <summary>
             /// Обрабатывает событие OrderPlacedEvent: создает запись о заказе в БД.
             /// </summary>
-            public async Task Visit(OrderPlacedEvent ev) // Возвращает Task
+            public async Task Visit(OrderPlacedEvent ev)
             {
                 Console.WriteLine($"[ORDER MGMT] Received Order Placed: ID={ev.OrderId}. Attempting to create order in DB.");
 
@@ -54,7 +49,6 @@ namespace EcommerceAcyclicVisitor
 
                 try
                 {
-                    // Сохраняем через репозиторий
                     await _orderRepository.AddOrderAsync(dbOrder);
                     Console.WriteLine($"[ORDER DB] Created Order: ID={dbOrder.OrderId}, Status={dbOrder.Status}");
                 }
@@ -64,19 +58,18 @@ namespace EcommerceAcyclicVisitor
                     Console.WriteLine($"[ORDER DB WARN] Order with ID '{ev.OrderId}' already exists. Skipping creation. Message: {ioex.Message}");
                     Console.ResetColor();
                 }
-                catch (Exception ex) // Общая ошибка при сохранении
+                catch (Exception ex)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine($"[ORDER DB ERROR] Failed to create order (ID: {ev.OrderId}). Error: {ex.Message}");
                     Console.ResetColor();
-                    // В реальной системе нужна более сложная обработка: компенсационные транзакции, очередь ошибок и т.д.
                 }
             }
 
             /// <summary>
             /// Обрабатывает событие PaymentReceivedEvent: находит заказ и обновляет его статус.
             /// </summary>
-            public async Task Visit(PaymentReceivedEvent ev) // Возвращает Task
+            public async Task Visit(PaymentReceivedEvent ev) 
             {
                 Console.WriteLine($"[ORDER MGMT] Received Payment Result for Order ID={ev.OrderId}. Status={ev.Status}. Attempting to update order in DB.");
 
@@ -98,12 +91,11 @@ namespace EcommerceAcyclicVisitor
                                         ? StatusProcessing
                                         : StatusPaymentFailed;
 
-                    // Проверяем, изменился ли статус, чтобы избежать лишних обновлений (опционально)
+                    // Проверяем, изменился ли статус, чтобы избежать лишних обновлений
                     if (order.Status != newStatus)
                     {
                         order.Status = newStatus; // Обновляем статус у сущности
 
-                        // Сохраняем изменения через репозиторий
                         await _orderRepository.UpdateOrderAsync(order);
                         Console.WriteLine($"[ORDER DB] Updated Order: ID={order.OrderId}, New Status={order.Status}");
                     }

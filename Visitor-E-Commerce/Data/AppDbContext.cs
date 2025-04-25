@@ -1,5 +1,4 @@
-﻿// Файл: Data/AppDbContext.cs
-using Microsoft.EntityFrameworkCore; // Нужен для DbContext и DbSet<>
+﻿using Microsoft.EntityFrameworkCore; // Нужен для DbContext и DbSet<>
 using EcommerceAcyclicVisitor.Data.Entities; // Нужны наши сущности
 
 namespace EcommerceAcyclicVisitor
@@ -29,9 +28,8 @@ namespace EcommerceAcyclicVisitor
             /// Эти опции (например, строка подключения или использование In-Memory DB)
             /// будут передаваться через Dependency Injection.
             /// </summary>
-            /// <param name="options">Опции конфигурации для DbContext.</param>
             public AppDbContext(DbContextOptions<AppDbContext> options)
-                : base(options) // Передаем опции базовому классу DbContext
+                : base(options)
             {
             }
 
@@ -40,25 +38,19 @@ namespace EcommerceAcyclicVisitor
             /// Вызывается EF Core при создании модели.
             /// Здесь можно настроить индексы, связи, ограничения и т.д.
             /// </summary>
-            /// <param name="modelBuilder">Объект для построения модели.</param>
             protected override void OnModelCreating(ModelBuilder modelBuilder)
             {
-                base.OnModelCreating(modelBuilder); // Рекомендуется вызывать базовую реализацию
+                base.OnModelCreating(modelBuilder);
 
-                // Пример: Добавление уникального индекса на OrderId в таблице Orders
                 modelBuilder.Entity<DbOrder>()
                     .HasIndex(o => o.OrderId)
                     .IsUnique();
 
-                // Пример: Добавление индекса на UserId в таблице Orders (не уникального)
                 modelBuilder.Entity<DbOrder>()
                     .HasIndex(o => o.UserId);
 
-                // Пример: Добавление индекса на OriginalEventId в таблице AuditLogEntries
                 modelBuilder.Entity<DbAuditLogEntry>()
                    .HasIndex(log => log.OriginalEventId);
-
-                // Здесь можно было бы настроить связь между DbOrder и DbOrderItem, если бы она была.
             }
         }
     }

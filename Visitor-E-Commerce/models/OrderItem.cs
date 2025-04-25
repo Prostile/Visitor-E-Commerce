@@ -1,9 +1,6 @@
-﻿// Файл: Models/OrderItem.cs
-using System;
-
-namespace EcommerceAcyclicVisitor
+﻿namespace EcommerceAcyclicVisitor
 {
-    namespace Models // Поместим простые модели данных сюда
+    namespace Models
     {
         /// <summary>
         /// Представляет товарную позицию в заказе.
@@ -28,7 +25,6 @@ namespace EcommerceAcyclicVisitor
                 PricePerUnit = pricePerUnit;
             }
 
-            // Для удобства отображения
             public override string ToString()
             {
                 return $"Product: {ProductId}, Qty: {Quantity}, Price: {PricePerUnit:C}";

@@ -1,9 +1,4 @@
-﻿// Файл: Events/OrderPlacedEvent.cs (Измененная версия)
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks; // Для Task
-using EcommerceAcyclicVisitor.Interfaces;
+﻿using EcommerceAcyclicVisitor.Interfaces;
 using EcommerceAcyclicVisitor.Models;
 
 namespace EcommerceAcyclicVisitor
@@ -11,7 +6,7 @@ namespace EcommerceAcyclicVisitor
     namespace Events
     {
         /// <summary>
-        /// Конкретное событие: Заказ размещен (Измененная версия).
+        /// Конкретное событие: Заказ размещен.
         /// Реализует IDomainEvent с асинхронным Accept.
         /// </summary>
         public class OrderPlacedEvent : IDomainEvent
@@ -41,16 +36,12 @@ namespace EcommerceAcyclicVisitor
             /// Асинхронная реализация метода Accept.
             /// Проверяет тип посетителя и асинхронно вызывает Visit, если тип совпадает.
             /// </summary>
-            /// <param name="visitor">Посетитель (обработчик).</param>
-            /// <returns>Задача, представляющая асинхронную операцию.</returns>
-            public async Task Accept(IVisitor visitor) // Метод теперь async Task
+            public async Task Accept(IVisitor visitor)
             {
                 if (visitor is IOrderPlacedVisitor specificVisitor)
                 {
-                    // Асинхронно вызываем и ожидаем Visit
                     await specificVisitor.Visit(this);
                 }
-                // Если тип не совпал, async метод вернет завершенную Task
             }
         }
     }

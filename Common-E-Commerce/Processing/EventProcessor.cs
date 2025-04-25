@@ -1,8 +1,4 @@
-﻿// Файл: Processing/EventProcessor.cs (в проекте EcommerceConditionalLogic - Измененная версия)
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks; // Для Task
-using EcommerceConditionalLogic.Interfaces;
+﻿using EcommerceConditionalLogic.Interfaces;
 using EcommerceConditionalLogic.Events;
 using EcommerceConditionalLogic.Services;
 
@@ -32,9 +28,7 @@ namespace EcommerceConditionalLogic
             /// Асинхронно обрабатывает входящее доменное событие, используя условную логику
             /// для асинхронного вызова методов Handle у соответствующих обработчиков.
             /// </summary>
-            /// <param name="ev">Доменное событие для обработки.</param>
-            /// <returns>Задача, представляющая асинхронную операцию обработки.</returns>
-            public async Task ProcessAsync(IDomainEvent ev) // Метод теперь ProcessAsync и async Task
+            public async Task ProcessAsync(IDomainEvent ev)
             {
                 if (ev == null)
                 {
@@ -49,23 +43,21 @@ namespace EcommerceConditionalLogic
                 {
                     try
                     {
-                        // Используем await при вызове методов Handle, так как они теперь Task
-
                         if (ev is UserRegisteredEvent ure)
                         {
-                            if (handler is AuditLogService als) await als.Handle(ure); // await
-                            if (handler is NotificationService ns) await ns.Handle(ure); // await
+                            if (handler is AuditLogService als) await als.Handle(ure);
+                            if (handler is NotificationService ns) await ns.Handle(ure);
                         }
                         else if (ev is OrderPlacedEvent ope)
                         {
-                            if (handler is AuditLogService als) await als.Handle(ope); // await
-                            if (handler is OrderManagementService oms) await oms.Handle(ope); // await
+                            if (handler is AuditLogService als) await als.Handle(ope);
+                            if (handler is OrderManagementService oms) await oms.Handle(ope);
                         }
                         else if (ev is PaymentReceivedEvent pre)
                         {
-                            if (handler is AuditLogService als) await als.Handle(pre); // await
-                            if (handler is OrderManagementService oms) await oms.Handle(pre); // await
-                            if (handler is NotificationService ns) await ns.Handle(pre); // await
+                            if (handler is AuditLogService als) await als.Handle(pre);
+                            if (handler is OrderManagementService oms) await oms.Handle(pre);
+                            if (handler is NotificationService ns) await ns.Handle(pre); 
                         }
                         else
                         {

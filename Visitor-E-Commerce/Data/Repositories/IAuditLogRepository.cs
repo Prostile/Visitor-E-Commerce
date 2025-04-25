@@ -1,7 +1,4 @@
-﻿// Файл: Data/Repositories/IAuditLogRepository.cs
-using System;
-using System.Threading.Tasks; // Для асинхронных операций
-using EcommerceAcyclicVisitor.Data.Entities; // Нужна сущность DbAuditLogEntry
+﻿using EcommerceAcyclicVisitor.Data.Entities;
 
 namespace EcommerceAcyclicVisitor
 {
@@ -16,13 +13,7 @@ namespace EcommerceAcyclicVisitor
             /// <summary>
             /// Асинхронно добавляет новую запись в журнал аудита.
             /// </summary>
-            /// <param name="logEntry">Запись для добавления.</param>
-            /// <returns>Задача, представляющая асинхронную операцию.</returns>
             Task AddLogEntryAsync(DbAuditLogEntry logEntry);
-
-            // Примечание: Можно добавить другие методы, если потребуется, например:
-            // Task<IEnumerable<DbAuditLogEntry>> GetLogsByEventIdAsync(Guid eventId);
-            // Task<IEnumerable<DbAuditLogEntry>> GetLogsInDateRangeAsync(DateTime start, DateTime end);
         }
     }
 }

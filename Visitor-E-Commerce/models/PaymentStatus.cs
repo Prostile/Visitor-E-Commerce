@@ -1,5 +1,4 @@
-﻿// Файл: Models/PaymentStatus.cs
-namespace EcommerceAcyclicVisitor
+﻿namespace EcommerceAcyclicVisitor
 {
     namespace Models
     {

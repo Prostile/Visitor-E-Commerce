@@ -1,8 +1,4 @@
-﻿// Файл: Interfaces/IDomainEvent.cs (Измененная версия)
-using System;
-using System.Threading.Tasks; // Добавляем для Task
-
-namespace EcommerceAcyclicVisitor
+﻿namespace EcommerceAcyclicVisitor
 {
     namespace Interfaces
     {
@@ -20,9 +16,7 @@ namespace EcommerceAcyclicVisitor
             /// Реализация этого метода в конкретных классах событий будет содержать
             /// проверку типа посетителя и асинхронный вызов соответствующего метода Visit.
             /// </summary>
-            /// <param name="visitor">Объект-посетитель (обработчик события).</param>
-            /// <returns>Задача, представляющая асинхронную операцию посещения.</returns>
-            Task Accept(IVisitor visitor); // Изменено с void на Task
+            Task Accept(IVisitor visitor);
         }
     }
 }

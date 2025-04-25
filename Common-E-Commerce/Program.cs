@@ -1,15 +1,9 @@
-﻿// Файл: Program.cs (в проекте EcommerceConditionalLogic - Финальная версия с DI и EF Core)
-using System;
-using System.Threading; // Для CancellationToken
-using System.Threading.Tasks; // Для Task и async Main
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 
-// Импортируем все необходимые пространства имен нашего проекта
 using EcommerceConditionalLogic.Data;
 using EcommerceConditionalLogic.Data.Repositories;
-// using EcommerceConditionalLogic.Interfaces; // Не нужен напрямую для регистрации
 using EcommerceConditionalLogic.Processing;
 using EcommerceConditionalLogic.Services;
 using EcommerceConditionalLogic.Simulation;
@@ -23,30 +17,20 @@ namespace EcommerceConditionalLogic
             var host = Host.CreateDefaultBuilder(args)
                 .ConfigureServices((context, services) =>
                 {
-                    // --- Настройка EF Core ---
-                    // (Идентично версии с Посетителем)
                     string dbName = $"EcommerceDb_Conditional_{Guid.NewGuid()}";
                     services.AddDbContext<AppDbContext>(options =>
                         options.UseInMemoryDatabase(dbName));
 
-                    // --- Регистрация Репозиториев ---
-                    // (Идентично версии с Посетителем)
                     services.AddScoped<IAuditLogRepository, AuditLogRepository>();
                     services.AddScoped<IOrderRepository, OrderRepository>();
 
-                    // --- Регистрация Обработчиков ---
-                    // Регистрируем конкретные классы обработчиков. DI позаботится о зависимостях.
                     services.AddScoped<AuditLogService>();
                     services.AddScoped<OrderManagementService>();
                     services.AddScoped<NotificationService>();
 
-                    // --- Регистрация Процессора и Симулятора ---
-                    // (Идентично версии с Посетителем)
-                    services.AddSingleton<EventProcessor>(); // Singleton
-                    services.AddScoped<FrontendSimulator>();  // Scoped или Transient
+                    services.AddSingleton<EventProcessor>();
+                    services.AddScoped<FrontendSimulator>();
 
-                    // --- Добавляем Hosted Service для запуска ---
-                    // (Идентично версии с Посетителем)
                     services.AddHostedService<SimulationRunner>();
 
                 })
@@ -58,8 +42,6 @@ namespace EcommerceConditionalLogic
         }
     }
 
-    // --- Класс для запуска симуляции ---
-    // (Структурно идентичен версии с Посетителем, но использует типы из этого проекта)
     public class SimulationRunner : IHostedService
     {
         private readonly IServiceProvider _serviceProvider;
@@ -107,10 +89,8 @@ namespace EcommerceConditionalLogic
                 // Получаем DbContext из того же scope
                 var dbContext = scopedProvider.GetRequiredService<AppDbContext>();
 
-                // 1. Выводим записи из журнала аудита
                 Console.WriteLine("\n>>> Audit Log Entries:");
-                // Используем ToListAsync для асинхронного получения данных
-                var auditLogs = await dbContext.AuditLogEntries.OrderBy(l => l.Timestamp).ToListAsync(cancellationToken); // Добавляем OrderBy для порядка
+                var auditLogs = await dbContext.AuditLogEntries.OrderBy(l => l.Timestamp).ToListAsync(cancellationToken);
                 if (!auditLogs.Any())
                 {
                     Console.WriteLine("   (No audit log entries found)");
@@ -119,14 +99,11 @@ namespace EcommerceConditionalLogic
                 {
                     foreach (var log in auditLogs)
                     {
-                        // Выводим основные поля
                         Console.WriteLine($"  - Id: {log.Id}, Time: {log.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")}, EventId: {log.OriginalEventId}, Type: {log.EventType}, Details: \"{log.Details}\"");
                     }
                 }
 
-                // 2. Выводим записи из таблицы заказов
                 Console.WriteLine("\n>>> Orders:");
-                // Используем ToListAsync и OrderBy
                 var orders = await dbContext.Orders.OrderBy(o => o.OrderTimestamp).ToListAsync(cancellationToken);
                 if (!orders.Any())
                 {
@@ -136,7 +113,6 @@ namespace EcommerceConditionalLogic
                 {
                     foreach (var order in orders)
                     {
-                        // Выводим основные поля
                         Console.WriteLine($"  - DbId: {order.Id}, OrderId: {order.OrderId}, UserId: {order.UserId}, Status: {order.Status}, Amount: {order.TotalAmount:C}, Time: {order.OrderTimestamp.ToString("yyyy-MM-dd HH:mm:ss")}");
                     }
                 }

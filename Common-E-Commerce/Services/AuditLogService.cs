@@ -1,10 +1,7 @@
-﻿// Файл: Services/AuditLogService.cs (в проекте EcommerceConditionalLogic - Измененная версия)
-using System;
-using System.Text.Json; // Для сериализации
-using System.Threading.Tasks; // Для Task
+﻿using System.Text.Json; 
 using EcommerceConditionalLogic.Events;
-using EcommerceConditionalLogic.Data.Repositories; // Нужен репозиторий из этого проекта
-using EcommerceConditionalLogic.Data.Entities; // Нужна сущность из этого проекта
+using EcommerceConditionalLogic.Data.Repositories; 
+using EcommerceConditionalLogic.Data.Entities; 
 
 namespace EcommerceConditionalLogic
 {
@@ -26,12 +23,10 @@ namespace EcommerceConditionalLogic
                 _auditLogRepository = auditLogRepository ?? throw new ArgumentNullException(nameof(auditLogRepository));
             }
 
-            // --- Асинхронные методы Handle ---
 
-            public async Task Handle(UserRegisteredEvent ev) // Теперь async Task
+            public async Task Handle(UserRegisteredEvent ev) 
             {
                 string details = $"User Registered: ID={ev.UserId}, Email={ev.Email}";
-                // Используем сущность DbAuditLogEntry из EcommerceConditionalLogic.Data.Entities
                 var logEntry = new DbAuditLogEntry(ev.EventId, ev.Timestamp, nameof(UserRegisteredEvent), details);
 
                 try
@@ -47,7 +42,7 @@ namespace EcommerceConditionalLogic
                 }
             }
 
-            public async Task Handle(OrderPlacedEvent ev) // Теперь async Task
+            public async Task Handle(OrderPlacedEvent ev)
             {
                 var detailsObject = new { ev.OrderId, ev.UserId, ev.TotalAmount, ItemCount = ev.Items.Count };
                 string details = JsonSerializer.Serialize(detailsObject);
@@ -66,7 +61,7 @@ namespace EcommerceConditionalLogic
                 }
             }
 
-            public async Task Handle(PaymentReceivedEvent ev) // Теперь async Task
+            public async Task Handle(PaymentReceivedEvent ev) 
             {
                 string details = $"Payment Received: OrderID={ev.OrderId}, PaymentID={ev.PaymentId}, Amount={ev.Amount:C}, Status={ev.Status}";
                 var logEntry = new DbAuditLogEntry(ev.EventId, ev.Timestamp, nameof(PaymentReceivedEvent), details);

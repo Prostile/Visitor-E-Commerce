@@ -1,6 +1,4 @@
-﻿// Файл: Data/Entities/DbAuditLogEntry.cs
-using System;
-using System.ComponentModel.DataAnnotations; // Для атрибута [Key]
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace EcommerceAcyclicVisitor
 {
@@ -17,7 +15,7 @@ namespace EcommerceAcyclicVisitor
             /// используются EF Core для определения первичного ключа.
             /// </summary>
             [Key]
-            public long Id { get; set; } // Используем long для потенциально большого кол-ва записей
+            public long Id { get; set; }
 
             /// <summary>
             /// Уникальный идентификатор исходного доменного события.
@@ -30,9 +28,9 @@ namespace EcommerceAcyclicVisitor
             public DateTime Timestamp { get; set; }
 
             /// <summary>
-            /// Тип произошедшего события (например, "UserRegistered", "OrderPlaced").
+            /// Тип произошедшего события (например, UserRegistered, OrderPlaced).
             /// </summary>
-            [Required] // Делаем поле обязательным на уровне БД (если поддерживается провайдером)
+            [Required] // Делаем поле обязательным на уровне БД
             [MaxLength(100)] // Ограничиваем длину строки
             public string EventType { get; set; }
 
@@ -40,21 +38,14 @@ namespace EcommerceAcyclicVisitor
             /// Сериализованные детали события или краткое описание.
             /// </summary>
             [Required]
-            public string Details { get; set; } // Длину можно увеличить при необходимости
+            public string Details { get; set; }
 
-            // Можно добавить другие поля, например:
-            // public string UserId { get; set; } // ID пользователя, связанного с событием (если применимо)
-            // public string? RelatedEntityId { get; set; } // ID связанной сущности (заказ, продукт)
-
-            // Конструктор без параметров требуется EF Core (хотя он может использовать и другие)
             public DbAuditLogEntry()
             {
-                // Инициализация строк, чтобы избежать null reference, если не установлены
                 EventType = string.Empty;
                 Details = string.Empty;
             }
 
-            // Удобный конструктор для создания объекта
             public DbAuditLogEntry(Guid originalEventId, DateTime timestamp, string eventType, string details)
             {
                 OriginalEventId = originalEventId;

@@ -1,8 +1,5 @@
-﻿// Файл: Services/NotificationService.cs (в проекте EcommerceConditionalLogic - Измененная версия)
-using System;
-using System.Threading.Tasks; // Для Task и Task.CompletedTask
-using EcommerceConditionalLogic.Events;
-using EcommerceConditionalLogic.Models; // Нужен PaymentStatus
+﻿using EcommerceConditionalLogic.Events;
+using EcommerceConditionalLogic.Models;
 
 namespace EcommerceConditionalLogic
 {
@@ -16,30 +13,25 @@ namespace EcommerceConditionalLogic
         {
             public NotificationService() { }
 
-            // --- Асинхронные методы Handle ---
 
-            public Task Handle(UserRegisteredEvent ev) // Теперь Task
+            public Task Handle(UserRegisteredEvent ev)
             {
-                // Синхронная логика
                 Console.WriteLine($"[NOTIFICATION] Sending welcome email to {ev.Email} for User ID={ev.UserId}.");
 
-                // Возвращаем завершенную задачу
                 return Task.CompletedTask;
             }
 
-            public Task Handle(PaymentReceivedEvent ev) // Теперь Task
+            public Task Handle(PaymentReceivedEvent ev)
             {
-                // Синхронная логика
                 if (ev.Status == PaymentStatus.Success)
                 {
                     Console.WriteLine($"[NOTIFICATION] Sending payment confirmation email for Order ID={ev.OrderId}. Payment ID={ev.PaymentId}.");
                 }
-                else // PaymentStatus.Failure
+                else
                 {
                     Console.WriteLine($"[NOTIFICATION] Sending payment failure notification for Order ID={ev.OrderId}. Payment ID={ev.PaymentId}.");
                 }
 
-                // Возвращаем завершенную задачу
                 return Task.CompletedTask;
             }
         }

@@ -1,57 +1,47 @@
-﻿// Файл: Services/NotificationService.cs (Измененная версия)
-using System;
-using System.Threading.Tasks; // Для Task и Task.CompletedTask
-using EcommerceAcyclicVisitor.Interfaces;
+﻿using EcommerceAcyclicVisitor.Interfaces;
 using EcommerceAcyclicVisitor.Events;
-using EcommerceAcyclicVisitor.Models; // Для PaymentStatus
+using EcommerceAcyclicVisitor.Models;
 
 namespace EcommerceAcyclicVisitor
 {
     namespace Services
     {
         /// <summary>
-        /// Сервис для отправки уведомлений пользователям (Измененная версия).
+        /// Сервис для отправки уведомлений пользователям.
         /// Методы Visit теперь возвращают Task для соответствия интерфейсам.
         /// </summary>
         public class NotificationService :
             IVisitor,
             IUserRegisteredVisitor,
             IPaymentReceivedVisitor
-        // IReviewSubmittedVisitor // Если будет добавлен
         {
-            // Конструктор остается прежним (если нет зависимостей)
             public NotificationService() { }
 
-            // Реализация метода Visit для UserRegisteredEvent
-            public Task Visit(UserRegisteredEvent ev) // Возвращает Task
+            public Task Visit(UserRegisteredEvent ev)
             {
-                // Синхронная логика (вывод в консоль)
-                Console.WriteLine($"[NOTIFICATION] Sending welcome email to {ev.Email} for User ID={ev.UserId}.");
-
-                // В реальном приложении здесь мог бы быть асинхронный вызов:
-                // await _emailService.SendWelcomeEmailAsync(ev.Email, ev.UserId);
-
-                // Возвращаем завершенную задачу, так как интерфейс требует Task
+                LogProcessorMessage($"Sending welcome email to {ev.Email} for User ID={ev.UserId}.");
                 return Task.CompletedTask;
             }
 
-            // Реализация метода Visit для PaymentReceivedEvent
-            public Task Visit(PaymentReceivedEvent ev) // Возвращает Task
+            public Task Visit(PaymentReceivedEvent ev)
             {
-                // Синхронная логика
                 if (ev.Status == PaymentStatus.Success)
                 {
-                    Console.WriteLine($"[NOTIFICATION] Sending payment confirmation email for Order ID={ev.OrderId}. Payment ID={ev.PaymentId}.");
-                    // await _emailService.SendPaymentConfirmationAsync(order.UserEmail, ev.OrderId, ...);
+                    LogProcessorMessage($"Sending payment confirmation email for Order ID={ev.OrderId}. Payment ID={ev.PaymentId}.");
                 }
-                else // PaymentStatus.Failure
+                else
                 {
-                    Console.WriteLine($"[NOTIFICATION] Sending payment failure notification for Order ID={ev.OrderId}. Payment ID={ev.PaymentId}.");
-                    // await _emailService.SendPaymentFailureAsync(order.UserEmail, ev.OrderId, ...);
+                    LogProcessorMessage($"Sending payment failure notification for Order ID={ev.OrderId}. Payment ID={ev.PaymentId}.");
                 }
 
-                // Возвращаем завершенную задачу
                 return Task.CompletedTask;
+            }
+
+            private void LogProcessorMessage(string message)
+            {
+                Console.ForegroundColor = ConsoleColor.DarkBlue;
+                Console.WriteLine($"[NOTIFICATION] {message}");
+                Console.ResetColor();
             }
         }
     }

@@ -1,10 +1,4 @@
-﻿// Файл: Simulation/FrontendSimulator.cs (Измененная версия - асинхронная)
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks; // Добавлено для Task и Task.Delay
-using EcommerceAcyclicVisitor.Events;
+﻿using EcommerceAcyclicVisitor.Events;
 using EcommerceAcyclicVisitor.Interfaces;
 using EcommerceAcyclicVisitor.Models;
 using EcommerceAcyclicVisitor.Processing;
@@ -35,21 +29,17 @@ namespace EcommerceAcyclicVisitor
             /// <summary>
             /// Асинхронно запускает симуляцию генерации событий.
             /// </summary>
-            /// <param name="numberOfEvents">Количество событий для генерации.</param>
-            /// <param name="delayMilliseconds">Задержка между событиями в миллисекундах.</param>
-            /// <returns>Задача, представляющая асинхронную операцию симуляции.</returns>
-            public async Task RunSimulationAsync(int numberOfEvents, int delayMilliseconds = 500) // Метод теперь async Task
+            public async Task RunSimulationAsync(int numberOfEvents, int delayMilliseconds = 500)
             {
                 LogSimulatorMessage($"--- Starting Frontend Simulation ({numberOfEvents} events, {delayMilliseconds}ms delay) ---");
 
                 for (int i = 0; i < numberOfEvents; i++)
                 {
-                    IDomainEvent generatedEvent = GenerateRandomEvent(); // Генерация остается синхронной
+                    IDomainEvent generatedEvent = GenerateRandomEvent();
 
                     if (generatedEvent != null)
                     {
                         LogSimulatorMessage($"Generated event: {generatedEvent.GetType().Name} (ID: {generatedEvent.EventId})");
-                        // Вызываем асинхронный метод процессора и ожидаем его
                         await _eventProcessor.ProcessAsync(generatedEvent);
                     }
                     else
@@ -60,7 +50,6 @@ namespace EcommerceAcyclicVisitor
 
                     if (delayMilliseconds > 0)
                     {
-                        // Используем асинхронную задержку Task.Delay вместо Thread.Sleep
                         await Task.Delay(delayMilliseconds);
                     }
                 }
@@ -68,8 +57,6 @@ namespace EcommerceAcyclicVisitor
                 LogSimulatorMessage("--- Frontend Simulation Complete ---");
             }
 
-            // Метод GenerateRandomEvent остается синхронным, так как сама генерация
-            // не требует асинхронных операций в данном примере.
             private IDomainEvent GenerateRandomEvent()
             {
                 int eventType = _random.Next(0, 3); // 0: UserReg, 1: OrderPlace, 2: PaymentRec
@@ -92,7 +79,7 @@ namespace EcommerceAcyclicVisitor
                         int itemsCount = _random.Next(1, 4);
                         List<OrderItem> items = new List<OrderItem>();
                         decimal totalAmount = 0;
-                        for (int j = 0; j < itemsCount; j++) // Используем другую переменную цикла
+                        for (int j = 0; j < itemsCount; j++)
                         {
                             string productId = _productIds[_random.Next(_productIds.Count)];
                             int quantity = _random.Next(1, 6);

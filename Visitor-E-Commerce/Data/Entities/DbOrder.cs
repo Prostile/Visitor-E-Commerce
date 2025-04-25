@@ -1,7 +1,5 @@
-﻿// Файл: Data/Entities/DbOrder.cs
-using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema; // Для [Column(TypeName = "...")]
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema; 
 
 namespace EcommerceAcyclicVisitor
 {
@@ -43,7 +41,7 @@ namespace EcommerceAcyclicVisitor
             /// Атрибут для указания типа данных в БД (важно для денег).
             /// </summary>
             [Required]
-            [Column(TypeName = "decimal(18, 2)")] // Указываем точность для SQL Server/PostgreSQL
+            [Column(TypeName = "decimal(18, 2)")]
             public decimal TotalAmount { get; set; }
 
             /// <summary>
@@ -54,25 +52,19 @@ namespace EcommerceAcyclicVisitor
             [MaxLength(50)]
             public string Status { get; set; }
 
-            // Примечание: Мы не храним здесь список OrderItem для простоты.
-            // В реальном приложении была бы отдельная таблица DbOrderItem
-            // со связью один-ко-многим (DbOrder -> DbOrderItem).
-
-            // Конструктор без параметров для EF Core
             public DbOrder()
             {
                 OrderId = string.Empty;
                 UserId = string.Empty;
-                Status = string.Empty; // Инициализируем статус по умолчанию
+                Status = string.Empty;
             }
 
-            // Удобный конструктор
             public DbOrder(string orderId, string userId, DateTime orderTimestamp, decimal totalAmount, string initialStatus)
             {
                 OrderId = orderId ?? throw new ArgumentNullException(nameof(orderId));
                 UserId = userId ?? throw new ArgumentNullException(nameof(userId));
                 OrderTimestamp = orderTimestamp;
-                TotalAmount = totalAmount; // Проверки на > 0 можно добавить
+                TotalAmount = totalAmount;
                 Status = initialStatus ?? throw new ArgumentNullException(nameof(initialStatus));
             }
         }

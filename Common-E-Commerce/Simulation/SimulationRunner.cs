@@ -19,7 +19,7 @@ namespace EcommerceConditionalLogic
         /// </summary>
         public class FrontendSimulator
         {
-            private readonly EventProcessor _eventProcessor; // EventProcessor из EcommerceConditionalLogic
+            private readonly EventProcessor _eventProcessor;
             private readonly Random _random = new Random();
             private int _userCounter = 0;
             private int _orderCounter = 0;
@@ -35,10 +35,7 @@ namespace EcommerceConditionalLogic
             /// <summary>
             /// Асинхронно запускает симуляцию генерации событий.
             /// </summary>
-            /// <param name="numberOfEvents">Количество событий для генерации.</param>
-            /// <param name="delayMilliseconds">Задержка между событиями в миллисекундах.</param>
-            /// <returns>Задача, представляющая асинхронную операцию симуляции.</returns>
-            public async Task RunSimulationAsync(int numberOfEvents, int delayMilliseconds = 500) // Теперь async Task
+            public async Task RunSimulationAsync(int numberOfEvents, int delayMilliseconds = 500)
             {
                 LogSimulatorMessage($"--- Starting Frontend Simulation ({numberOfEvents} events, {delayMilliseconds}ms delay) ---");
 
@@ -49,7 +46,6 @@ namespace EcommerceConditionalLogic
                     if (generatedEvent != null)
                     {
                         LogSimulatorMessage($"Generated event: {generatedEvent.GetType().Name} (ID: {generatedEvent.EventId})");
-                        // Вызываем асинхронный ProcessAsync процессора
                         await _eventProcessor.ProcessAsync(generatedEvent);
                     }
                     else
@@ -59,7 +55,6 @@ namespace EcommerceConditionalLogic
 
                     if (delayMilliseconds > 0)
                     {
-                        // Используем асинхронную задержку
                         await Task.Delay(delayMilliseconds);
                     }
                 }
@@ -67,7 +62,6 @@ namespace EcommerceConditionalLogic
                 LogSimulatorMessage("--- Frontend Simulation Complete ---");
             }
 
-            // Метод GenerateRandomEvent остается синхронным
             private IDomainEvent GenerateRandomEvent()
             {
                 int eventType = _random.Next(0, 3);
@@ -79,7 +73,6 @@ namespace EcommerceConditionalLogic
                         string newUserId = $"user-{_userCounter}";
                         string email = $"user{_userCounter}@example.com";
                         _userIds.Add(newUserId);
-                        // Используем UserRegisteredEvent из EcommerceConditionalLogic.Events
                         return new UserRegisteredEvent(newUserId, email);
 
                     case 1: // OrderPlacedEvent
@@ -96,11 +89,9 @@ namespace EcommerceConditionalLogic
                             int quantity = _random.Next(1, 6);
                             decimal price = (decimal)(_random.Next(10, 1000) * _random.NextDouble());
                             price = Math.Round(price, 2);
-                            // Используем OrderItem из EcommerceConditionalLogic.Models
                             items.Add(new OrderItem(productId, quantity, price));
                             totalAmount += quantity * price;
                         }
-                        // Используем OrderPlacedEvent из EcommerceConditionalLogic.Events
                         return new OrderPlacedEvent(orderId, randomUserId, totalAmount, items);
 
                     case 2: // PaymentReceivedEvent
@@ -110,9 +101,7 @@ namespace EcommerceConditionalLogic
                         string paymentId = $"pay-{_paymentCounter}-{_random.Next(1000, 9999)}";
                         decimal paymentAmount = (decimal)(_random.Next(10, 1500) * _random.NextDouble());
                         paymentAmount = Math.Round(paymentAmount, 2);
-                        // Используем PaymentStatus из EcommerceConditionalLogic.Models
                         PaymentStatus status = _random.Next(0, 10) < 8 ? PaymentStatus.Success : PaymentStatus.Failure;
-                        // Используем PaymentReceivedEvent из EcommerceConditionalLogic.Events
                         return new PaymentReceivedEvent(paymentOrderId, paymentId, paymentAmount, status);
 
                     default:

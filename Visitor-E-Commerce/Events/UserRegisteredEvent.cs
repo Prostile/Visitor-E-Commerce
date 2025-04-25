@@ -1,14 +1,11 @@
-﻿// Файл: Events/UserRegisteredEvent.cs (Измененная версия)
-using System;
-using System.Threading.Tasks; // Для Task и Task.CompletedTask
-using EcommerceAcyclicVisitor.Interfaces;
+﻿using EcommerceAcyclicVisitor.Interfaces;
 
 namespace EcommerceAcyclicVisitor
 {
     namespace Events
     {
         /// <summary>
-        /// Конкретное событие: Пользователь зарегистрировался (Измененная версия).
+        /// Конкретное событие: Пользователь зарегистрировался.
         /// Реализует IDomainEvent с асинхронным Accept.
         /// </summary>
         public class UserRegisteredEvent : IDomainEvent
@@ -30,19 +27,12 @@ namespace EcommerceAcyclicVisitor
             /// Асинхронная реализация метода Accept.
             /// Проверяет тип посетителя и асинхронно вызывает Visit, если тип совпадает.
             /// </summary>
-            /// <param name="visitor">Посетитель (обработчик).</param>
-            /// <returns>Задача, представляющая асинхронную операцию.</returns>
-            public async Task Accept(IVisitor visitor) // Метод теперь async Task
+            public async Task Accept(IVisitor visitor)
             {
                 if (visitor is IUserRegisteredVisitor specificVisitor)
                 {
-                    // Асинхронно вызываем метод Visit и ожидаем его завершения
                     await specificVisitor.Visit(this);
                 }
-                // Если посетитель не реализует интерфейс, то не делаем ничего асинхронного,
-                // поэтому можно было бы вернуть Task.CompletedTask, но async метод
-                // сам обернет результат в Task, так что дополнительных действий не нужно.
-                // Просто выходим из метода.
             }
         }
     }

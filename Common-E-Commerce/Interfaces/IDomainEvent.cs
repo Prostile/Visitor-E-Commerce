@@ -1,8 +1,4 @@
-﻿// Файл: Interfaces/IDomainEvent.cs (Измененная версия)
-using System;
-using System.Threading.Tasks; // Добавляем для Task
-
-namespace EcommerceConditionalLogic
+﻿namespace EcommerceConditionalLogic
 {
     namespace Interfaces
     {
